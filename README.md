@@ -1,7 +1,7 @@
 # Assignment 6 - Pokemon ⚡
 
 - 💯 **Worth**: 7%
-- 📅 **Due**: November 20, 2022 @ 23:59
+- 📅 **Due**: November 19, 2023 @ 23:59
 - 🚫 **Penalty**: Late submissions lose 10% per day to a maximum of 3 days. Nothing is accepted after 3 days and a grade of 0% will be given.
 
 ## 🎯 Objectives
