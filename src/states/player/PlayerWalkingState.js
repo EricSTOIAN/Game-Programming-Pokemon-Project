@@ -17,8 +17,7 @@ export default class PlayerWalkingState extends State {
 	/**
 	 * In this state, the player can move around using the
 	 * directional keys. From here, the player can go idle
-	 * if no keys are being pressed. The player can also swing
-	 * their sword if they press the spacebar.
+	 * if no keys are being pressed.
 	 *
 	 * @param {Player} player
 	 */
