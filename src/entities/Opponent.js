@@ -1,7 +1,7 @@
-import GameEntity from "./GameEntity.js";
-import { pokemonFactory } from "../globals.js";
-import { pickRandomElement } from "../../lib/RandomNumberHelpers.js";
-import PokemonName from "../enums/PokemonName.js";
+import GameEntity from './GameEntity.js';
+import { pokemonFactory } from '../globals.js';
+import { pickRandomElement } from '../../lib/Random.js';
+import PokemonName from '../enums/PokemonName.js';
 
 export default class Opponent extends GameEntity {
 	/**

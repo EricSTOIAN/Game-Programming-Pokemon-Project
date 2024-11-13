@@ -1,9 +1,10 @@
-import Animation from "../../../lib/Animation.js";
-import State from "../../../lib/State.js";
-import Player from "../../entities/Player.js";
-import Direction from "../../enums/Direction.js";
-import PlayerStateName from "../../enums/PlayerStateName.js";
-import { keys } from "../../globals.js";
+import Animation from '../../../lib/Animation.js';
+import State from '../../../lib/State.js';
+import Player from '../../entities/Player.js';
+import Direction from '../../enums/Direction.js';
+import PlayerStateName from '../../enums/PlayerStateName.js';
+import { input } from '../../globals.js';
+import Input from '../../../lib/Input.js';
 
 export default class PlayerIdlingState extends State {
 	/**
@@ -29,19 +30,16 @@ export default class PlayerIdlingState extends State {
 	}
 
 	update() {
-		if (keys.s) {
+		if (input.isKeyHeld(Input.KEYS.S)) {
 			this.player.direction = Direction.Down;
 			this.player.changeState(PlayerStateName.Walking);
-		}
-		else if (keys.d) {
+		} else if (input.isKeyHeld(Input.KEYS.D)) {
 			this.player.direction = Direction.Right;
 			this.player.changeState(PlayerStateName.Walking);
-		}
-		else if (keys.w) {
+		} else if (input.isKeyHeld(Input.KEYS.W)) {
 			this.player.direction = Direction.Up;
 			this.player.changeState(PlayerStateName.Walking);
-		}
-		else if (keys.a) {
+		} else if (input.isKeyHeld(Input.KEYS.A)) {
 			this.player.direction = Direction.Left;
 			this.player.changeState(PlayerStateName.Walking);
 		}

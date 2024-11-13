@@ -1,15 +1,17 @@
-import Animation from "../../../lib/Animation.js";
-import { didSucceedPercentChance } from "../../../lib/RandomNumberHelpers.js";
-import State from "../../../lib/State.js";
-import Opponent from "../../entities/Opponent.js";
-import Player from "../../entities/Player.js";
-import Direction from "../../enums/Direction.js";
-import PlayerStateName from "../../enums/PlayerStateName.js";
-import SoundName from "../../enums/SoundName.js";
-import { keys, sounds, stateStack, timer } from "../../globals.js";
-import Tile from "../../services/Tile.js";
-import BattleState from "../game/BattleState.js";
-import TransitionState from "../game/TransitionState.js";
+import Animation from '../../../lib/Animation.js';
+import { didSucceedPercentChance } from '../../../lib/Random.js';
+import State from '../../../lib/State.js';
+import Opponent from '../../entities/Opponent.js';
+import Player from '../../entities/Player.js';
+import Direction from '../../enums/Direction.js';
+import PlayerStateName from '../../enums/PlayerStateName.js';
+import SoundName from '../../enums/SoundName.js';
+import Input from '../../../lib/Input.js';
+import { input, sounds, stateStack, timer } from '../../globals.js';
+import Tile from '../../services/Tile.js';
+import BattleState from '../game/BattleState.js';
+import TransitionState from '../game/TransitionState.js';
+import Easing from '../../../lib/Easing.js';
 
 export default class PlayerWalkingState extends State {
 	static ENCOUNTER_CHANCE = 0.1;
@@ -54,7 +56,12 @@ export default class PlayerWalkingState extends State {
 			return;
 		}
 
-		if (!keys.w && !keys.a && !keys.s && !keys.d) {
+		if (
+			!input.isKeyHeld(Input.KEYS.W) &&
+			!input.isKeyHeld(Input.KEYS.A) &&
+			!input.isKeyHeld(Input.KEYS.S) &&
+			!input.isKeyHeld(Input.KEYS.D)
+		) {
 			this.player.changeState(PlayerStateName.Idling);
 			return;
 		}
@@ -64,16 +71,13 @@ export default class PlayerWalkingState extends State {
 	}
 
 	updateDirection() {
-		if (keys.s) {
+		if (input.isKeyHeld(Input.KEYS.S)) {
 			this.player.direction = Direction.Down;
-		}
-		else if (keys.d) {
+		} else if (input.isKeyHeld(Input.KEYS.D)) {
 			this.player.direction = Direction.Right;
-		}
-		else if (keys.w) {
+		} else if (input.isKeyHeld(Input.KEYS.W)) {
 			this.player.direction = Direction.Up;
-		}
-		else if (keys.a) {
+		} else if (input.isKeyHeld(Input.KEYS.A)) {
 			this.player.direction = Direction.Left;
 		}
 	}
@@ -82,17 +86,19 @@ export default class PlayerWalkingState extends State {
 		let x = this.player.position.x;
 		let y = this.player.position.y;
 
-		if (this.player.direction === Direction.Up) {
-			y--;
-		}
-		else if (this.player.direction === Direction.Down) {
-			y++;
-		}
-		else if (this.player.direction === Direction.Left) {
-			x--;
-		}
-		else if (this.player.direction === Direction.Right) {
-			x++;
+		switch (this.player.direction) {
+			case Direction.Up:
+				y--;
+				break;
+			case Direction.Down:
+				y++;
+				break;
+			case Direction.Left:
+				x--;
+				break;
+			case Direction.Right:
+				x++;
+				break;
 		}
 
 		if (!this.isValidMove(x, y)) {
@@ -111,9 +117,9 @@ export default class PlayerWalkingState extends State {
 
 		timer.tween(
 			this.player.canvasPosition,
-			['x', 'y'],
-			[x * Tile.SIZE, y * Tile.SIZE],
+			{ x: x * Tile.SIZE, y: y * Tile.SIZE },
 			0.25,
+			Easing.linear,
 			() => {
 				this.isMoving = false;
 
@@ -141,8 +147,10 @@ export default class PlayerWalkingState extends State {
 	 * @returns Whether player is going to move to a grass tile. Succeeds 10% of the time.
 	 */
 	checkForEncounter(x, y) {
-		return this.bottomLayer.isTileGrass(x, y)
-			&& didSucceedPercentChance(PlayerWalkingState.ENCOUNTER_CHANCE);
+		return (
+			this.bottomLayer.isTileGrass(x, y) &&
+			didSucceedPercentChance(PlayerWalkingState.ENCOUNTER_CHANCE)
+		);
 	}
 
 	/**

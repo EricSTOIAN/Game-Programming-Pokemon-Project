@@ -1,27 +1,29 @@
-import State from "../../../lib/State.js";
-import Colour from "../../enums/Colour.js";
-import ImageName from "../../enums/ImageName.js";
-import PokemonName from "../../enums/PokemonName.js";
-import SoundName from "../../enums/SoundName.js";
-import PlayState from "./PlayState.js";
-import TransitionState from "./TransitionState.js";
+import State from '../../../lib/State.js';
+import Colour from '../../enums/Colour.js';
+import ImageName from '../../enums/ImageName.js';
+import PokemonName from '../../enums/PokemonName.js';
+import SoundName from '../../enums/SoundName.js';
+import PlayState from './PlayState.js';
+import TransitionState from './TransitionState.js';
 import {
 	CANVAS_WIDTH,
 	context,
 	images,
-	keys,
+	input,
 	pokemonFactory,
 	sounds,
 	stateStack,
 	timer,
-} from "../../globals.js";
+} from '../../globals.js';
+import Input from '../../../lib/Input.js';
+import Easing from '../../../lib/Easing.js';
 
 export default class TitleScreenState extends State {
 	static POSITION = {
 		start: { x: 480, y: 150 },
 		mid: { x: 160, y: 150 },
 		end: { x: -160, y: 150 },
-	}
+	};
 
 	/**
 	 * Consists of some text fields and a carousel of
@@ -50,7 +52,7 @@ export default class TitleScreenState extends State {
 	}
 
 	update() {
-		if (keys.Enter) {
+		if (input.isKeyHeld(Input.KEYS.ENTER)) {
 			this.play();
 		}
 	}
@@ -93,8 +95,11 @@ export default class TitleScreenState extends State {
 
 		pokemon.forEach((pokemon) => {
 			pokemon.sprites = pokemon.battleSprites;
-			pokemon.position.set(TitleScreenState.POSITION.start.x, TitleScreenState.POSITION.start.y);
-		})
+			pokemon.position.set(
+				TitleScreenState.POSITION.start.x,
+				TitleScreenState.POSITION.start.y
+			);
+		});
 
 		return pokemon;
 	}
@@ -113,9 +118,9 @@ export default class TitleScreenState extends State {
 	slideOn() {
 		timer.tween(
 			this.currentPokemon.position,
-			['x', 'y'],
-			[TitleScreenState.POSITION.mid.x, TitleScreenState.POSITION.mid.y],
+			{ x: TitleScreenState.POSITION.mid.x, y: TitleScreenState.POSITION.mid.y },
 			0.5,
+			Easing.linear,
 			() => this.slideOff()
 		);
 	}
@@ -124,16 +129,19 @@ export default class TitleScreenState extends State {
 		timer.wait(1.5, () => {
 			timer.tween(
 				this.currentPokemon.position,
-				['x', 'y'],
-				[TitleScreenState.POSITION.end.x, TitleScreenState.POSITION.end.y],
+				{ x: TitleScreenState.POSITION.end.x, y: TitleScreenState.POSITION.end.y },
 				0.5,
+				Easing.linear,
 				() => this.reset()
 			);
 		});
 	}
 
 	reset() {
-		this.currentPokemon.position.set(TitleScreenState.POSITION.start.x, TitleScreenState.POSITION.start.y);
+		this.currentPokemon.position.set(
+			TitleScreenState.POSITION.start.x,
+			TitleScreenState.POSITION.start.y
+		);
 		this.currentPokemon = this.pokemon[this.getNextIndex()];
 	}
 

@@ -1,15 +1,15 @@
-import GameEntity from "./GameEntity.js";
-import { images, pokemonFactory } from "../globals.js";
-import StateMachine from "../../lib/StateMachine.js";
-import PlayerWalkingState from "../states/player/PlayerWalkingState.js";
-import PlayerIdlingState from "../states/player/PlayerIdlingState.js";
-import PlayerStateName from "../enums/PlayerStateName.js";
-import Sprite from "../../lib/Sprite.js";
-import Vector from "../../lib/Vector.js";
-import { pickRandomElement } from "../../lib/RandomNumberHelpers.js";
-import Character from "../enums/Character.js";
-import PokemonName from "../enums/PokemonName.js";
-import Map from "../services/Map.js";
+import GameEntity from './GameEntity.js';
+import { images, pokemonFactory } from '../globals.js';
+import StateMachine from '../../lib/StateMachine.js';
+import PlayerWalkingState from '../states/player/PlayerWalkingState.js';
+import PlayerIdlingState from '../states/player/PlayerIdlingState.js';
+import PlayerStateName from '../enums/PlayerStateName.js';
+import Sprite from '../../lib/Sprite.js';
+import Vector from '../../lib/Vector.js';
+import { pickRandomElement } from '../../lib/Random.js';
+import Character from '../enums/Character.js';
+import PokemonName from '../enums/PokemonName.js';
+import Map from '../services/Map.js';
 
 export default class Player extends GameEntity {
 	/**
@@ -25,9 +25,10 @@ export default class Player extends GameEntity {
 		this.map = map;
 		this.dimensions = new Vector(GameEntity.WIDTH, GameEntity.HEIGHT);
 		this.stateMachine = this.initializeStateMachine();
-		this.sprites = this.initializeSprites()
-		this.party = this.initializeParty()
-		this.currentAnimation = this.stateMachine.currentState.animation[this.direction];
+		this.sprites = this.initializeSprites();
+		this.party = this.initializeParty();
+		this.currentAnimation =
+			this.stateMachine.currentState.animation[this.direction];
 	}
 
 	update(dt) {
@@ -77,7 +78,7 @@ export default class Player extends GameEntity {
 		return Sprite.generateSpritesFromSpriteSheet(
 			images.get(character),
 			GameEntity.WIDTH,
-			GameEntity.HEIGHT,
+			GameEntity.HEIGHT
 		);
 	}
 
@@ -99,6 +100,6 @@ export default class Player extends GameEntity {
 	healParty() {
 		this.party.forEach((pokemon) => {
 			pokemon.heal();
-		})
+		});
 	}
 }

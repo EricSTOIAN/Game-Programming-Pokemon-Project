@@ -16,11 +16,11 @@
  * player can fight and defeat with their own Pokémon.
  *
  * All Assets
- * @see https://reliccastle.com/essentials/
+ * @see https://reliccastlearchive.neocities.org/
  */
 
-import Game from "../lib/Game.js";
-import TitleScreenState from "./states/game/TitleScreenState.js";
+import Game from '../lib/Game.js';
+import TitleScreenState from './states/game/TitleScreenState.js';
 import {
 	canvas,
 	CANVAS_HEIGHT,
@@ -28,12 +28,11 @@ import {
 	context,
 	fonts,
 	images,
-	keys,
 	pokemonFactory,
 	sounds,
 	stateStack,
 	timer,
-} from "./globals.js";
+} from './globals.js';
 
 // Set the dimensions of the play area.
 canvas.width = CANVAS_WIDTH;
@@ -46,10 +45,14 @@ document.body.appendChild(canvas);
 const {
 	images: imageDefinitions,
 	fonts: fontDefinitions,
-	sounds: soundDefinitions
+	sounds: soundDefinitions,
 } = await fetch('./config/assets.json').then((response) => response.json());
-const mapDefinition = await fetch('./config/map.json').then((response) => response.json());
-const pokemonDefinitions = await fetch('./config/pokemon.json').then((response) => response.json());
+const mapDefinition = await fetch('./config/map.json').then((response) =>
+	response.json()
+);
+const pokemonDefinitions = await fetch('./config/pokemon.json').then(
+	(response) => response.json()
+);
 
 // Load all the assets from their definitions.
 images.load(imageDefinitions);
@@ -66,12 +69,3 @@ game.start();
 
 // Focus the canvas so that the player doesn't have to click on it.
 canvas.focus();
-
-// Add event listeners for player input.
-canvas.addEventListener('keydown', event => {
-	keys[event.key] = true;
-});
-
-canvas.addEventListener('keyup', event => {
-	keys[event.key] = false;
-});

@@ -1,11 +1,12 @@
-import State from "../../../lib/State.js";
-import SoundName from "../../enums/SoundName.js";
-import { CANVAS_HEIGHT, sounds, stateStack, timer } from "../../globals.js";
-import Pokemon from "../../entities/Pokemon.js";
-import BattleMenuState from "./BattleMenuState.js";
-import BattleMessageState from "./BattleMessageState.js";
-import BattleState from "./BattleState.js";
-import { oneInXChance } from "../../../lib/RandomNumberHelpers.js";
+import State from '../../../lib/State.js';
+import SoundName from '../../enums/SoundName.js';
+import { CANVAS_HEIGHT, sounds, stateStack, timer } from '../../globals.js';
+import Pokemon from '../../entities/Pokemon.js';
+import BattleMenuState from './BattleMenuState.js';
+import BattleMessageState from './BattleMessageState.js';
+import BattleState from './BattleState.js';
+import { oneInXChance } from '../../../lib/Random.js';
+import Easing from '../../../lib/Easing.js';
 
 export default class BattleTurnState extends State {
 	/**
@@ -28,16 +29,13 @@ export default class BattleTurnState extends State {
 		if (this.playerPokemon.speed > this.opponentPokemon.speed) {
 			this.firstPokemon = this.playerPokemon;
 			this.secondPokemon = this.opponentPokemon;
-		}
-		else if (this.playerPokemon.speed < this.opponentPokemon.speed) {
+		} else if (this.playerPokemon.speed < this.opponentPokemon.speed) {
 			this.firstPokemon = this.opponentPokemon;
 			this.secondPokemon = this.playerPokemon;
-		}
-		else if (oneInXChance(2)) {
+		} else if (oneInXChance(2)) {
 			this.firstPokemon = this.playerPokemon;
 			this.secondPokemon = this.opponentPokemon;
-		}
-		else {
+		} else {
 			this.firstPokemon = this.opponentPokemon;
 			this.secondPokemon = this.playerPokemon;
 		}
@@ -75,21 +73,34 @@ export default class BattleTurnState extends State {
 	 * @param {function} callback
 	 */
 	attack(attacker, defender, callback) {
-		stateStack.push(new BattleMessageState(`${attacker.name} attacked ${defender.name}!`, 0.5, () => {
-			timer.tween(
-				attacker.position,
-				['x', 'y'],
-				[attacker.attackPosition.x, attacker.attackPosition.y],
-				0.1,
+		stateStack.push(
+			new BattleMessageState(
+				`${attacker.name} attacked ${defender.name}!`,
+				0.5,
 				() => {
 					timer.tween(
 						attacker.position,
-						['x', 'y'],
-						[attacker.battlePosition.x, attacker.battlePosition.y],
+						{ x: attacker.attackPosition.x, y: attacker.attackPosition.y },
 						0.1,
-						() => this.inflictDamage(attacker, defender, callback));
-				});
-		}));
+						Easing.linear,
+						() => {
+							timer.tween(
+								attacker.position,
+								{ x: attacker.battlePosition.x, y: attacker.battlePosition.y },
+								0.1,
+								Easing.linear,
+								() =>
+									this.inflictDamage(
+										attacker,
+										defender,
+										callback
+									)
+							);
+						}
+					);
+				}
+			)
+		);
 	}
 
 	/**
@@ -118,8 +129,7 @@ export default class BattleTurnState extends State {
 		if (this.playerPokemon.currentHealth <= 0) {
 			this.processDefeat();
 			return true;
-		}
-		else if (this.opponentPokemon.currentHealth <= 0) {
+		} else if (this.opponentPokemon.currentHealth <= 0) {
 			this.processVictory();
 			return true;
 		}
@@ -133,9 +143,21 @@ export default class BattleTurnState extends State {
 	 */
 	processDefeat() {
 		sounds.play(SoundName.PokemonFaint);
-		timer.tween(this.playerPokemon.position, ['y'], [CANVAS_HEIGHT], 0.2, () => {
-			stateStack.push(new BattleMessageState(`${this.playerPokemon.name} fainted!`, 0, () => this.battleState.exitBattle()));
-		});
+		timer.tween(
+			this.playerPokemon.position,
+			{ y: CANVAS_HEIGHT },
+			0.2,
+			Easing.linear,
+			() => {
+				stateStack.push(
+					new BattleMessageState(
+						`${this.playerPokemon.name} fainted!`,
+						0,
+						() => this.battleState.exitBattle()
+					)
+				);
+			}
+		);
 	}
 
 	/**
@@ -144,25 +166,44 @@ export default class BattleTurnState extends State {
 	 */
 	processVictory() {
 		sounds.play(SoundName.PokemonFaint);
-		timer.tween(this.opponentPokemon.position, ['y'], [CANVAS_HEIGHT], 0.4, () => {
-			sounds.stop(SoundName.BattleLoop);
-			sounds.play(SoundName.BattleVictory);
-			stateStack.push(new BattleMessageState('You won!', 0, () => this.processExperience()));
-		});
+		timer.tween(
+			this.opponentPokemon.position,
+			{ y: CANVAS_HEIGHT },
+			0.4,
+			Easing.linear,
+			() => {
+				sounds.stop(SoundName.BattleLoop);
+				sounds.play(SoundName.BattleVictory);
+				stateStack.push(
+					new BattleMessageState('You won!', 0, () =>
+						this.processExperience()
+					)
+				);
+			}
+		);
 	}
 
 	processExperience() {
-		const experience = this.playerPokemon.calculateExperienceToAward(this.opponentPokemon);
+		const experience = this.playerPokemon.calculateExperienceToAward(
+			this.opponentPokemon
+		);
 		const message = `${this.playerPokemon.name} earned ${experience} experience points!`;
 
-		stateStack.push(new BattleMessageState(message, 1.5, () => this.processLevelUp(experience)));
+		stateStack.push(
+			new BattleMessageState(message, 1.5, () =>
+				this.processLevelUp(experience)
+			)
+		);
 	}
 
 	processLevelUp(experience) {
 		this.playerPokemon.currentExperience += experience;
 
 		// Level up if we've gone over the experience threshold.
-		if (this.playerPokemon.currentExperience < this.playerPokemon.targetExperience) {
+		if (
+			this.playerPokemon.currentExperience <
+			this.playerPokemon.targetExperience
+		) {
 			this.battleState.exitBattle();
 			return;
 		}
@@ -171,6 +212,12 @@ export default class BattleTurnState extends State {
 
 		this.playerPokemon.levelUp();
 
-		stateStack.push(new BattleMessageState(`${this.playerPokemon.name} grew to LV. ${this.playerPokemon.level}!`, 0, () => this.battleState.exitBattle()));
+		stateStack.push(
+			new BattleMessageState(
+				`${this.playerPokemon.name} grew to LV. ${this.playerPokemon.level}!`,
+				0,
+				() => this.battleState.exitBattle()
+			)
+		);
 	}
 }

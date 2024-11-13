@@ -1,7 +1,8 @@
-import UserInterfaceElement from "../UserInterfaceElement.js";
-import SoundName from "../../enums/SoundName.js";
-import { context, keys, sounds } from "../../globals.js";
-import Vector from "../../../lib/Vector.js";
+import UserInterfaceElement from '../UserInterfaceElement.js';
+import SoundName from '../../enums/SoundName.js';
+import { context, input, sounds } from '../../globals.js';
+import Vector from '../../../lib/Vector.js';
+import Input from '../../../lib/Input.js';
 
 export default class Selection extends UserInterfaceElement {
 	/**
@@ -27,13 +28,20 @@ export default class Selection extends UserInterfaceElement {
 	}
 
 	update() {
-		if (keys.w || keys.ArrowUp) {
+		if (
+			input.isKeyPressed(Input.KEYS.W) ||
+			input.isKeyPressed(Input.KEYS.ARROW_UP)
+		) {
 			this.navigateUp();
-		}
-		else if (keys.s || keys.ArrowDown) {
+		} else if (
+			input.isKeyPressed(Input.KEYS.S) ||
+			input.isKeyPressed(Input.KEYS.ARROW_DOWN)
+		) {
 			this.navigateDown();
-		}
-		else if (keys.Enter || keys[' ']) {
+		} else if (
+			input.isKeyPressed(Input.KEYS.ENTER) ||
+			input.isKeyPressed(Input.KEYS.SPACE)
+		) {
 			this.select();
 		}
 	}
@@ -70,37 +78,26 @@ export default class Selection extends UserInterfaceElement {
 	}
 
 	navigateUp() {
-		keys.w = false;
-		keys.ArrowUp = false;
-
 		sounds.play(SoundName.SelectionMove);
 
 		if (this.currentSelection === 0) {
 			this.currentSelection = this.items.length - 1;
-		}
-		else {
+		} else {
 			this.currentSelection--;
 		}
 	}
 
 	navigateDown() {
-		keys.s = false;
-		keys.ArrowDown = false;
-
 		sounds.play(SoundName.SelectionMove);
 
 		if (this.currentSelection === this.items.length - 1) {
 			this.currentSelection = 0;
-		}
-		else {
+		} else {
 			this.currentSelection++;
 		}
 	}
 
 	select() {
-		keys.Enter = false;
-		keys[' '] = false;
-
 		sounds.play(SoundName.SelectionChoice);
 		this.items[this.currentSelection].onSelect();
 	}
@@ -117,7 +114,10 @@ export default class Selection extends UserInterfaceElement {
 		items.forEach((item) => {
 			const padding = currentY + this.gapHeight;
 
-			item.position = new Vector(this.position.x + this.dimensions.x / 2, padding);
+			item.position = new Vector(
+				this.position.x + this.dimensions.x / 2,
+				padding
+			);
 
 			currentY += this.gapHeight;
 		});
@@ -129,6 +129,8 @@ export default class Selection extends UserInterfaceElement {
 	 * Scales the font size based on the size of this Selection element.
 	 */
 	initializeFont() {
-		return `${Math.min(UserInterfaceElement.FONT_SIZE, this.gapHeight)}px ${UserInterfaceElement.FONT_FAMILY}`;
+		return `${Math.min(UserInterfaceElement.FONT_SIZE, this.gapHeight)}px ${
+			UserInterfaceElement.FONT_FAMILY
+		}`;
 	}
 }

@@ -1,7 +1,8 @@
-import PokemonStatsPanel from "../../user-interface/PokemonStatsPanel.js";
-import State from "../../../lib/State.js";
-import { keys, sounds, stateStack } from "../../globals.js";
-import SoundName from "../../enums/SoundName.js";
+import PokemonStatsPanel from '../../user-interface/PokemonStatsPanel.js';
+import State from '../../../lib/State.js';
+import Input from '../../../lib/Input.js';
+import { input, sounds, stateStack } from '../../globals.js';
+import SoundName from '../../enums/SoundName.js';
 
 export default class PokemonStatsState extends State {
 	constructor(pokemon) {
@@ -17,10 +18,10 @@ export default class PokemonStatsState extends State {
 	update(dt) {
 		this.panel.update(dt);
 
-		if (keys.Escape || keys.Enter) {
-			keys.Escape = false;
-			keys.Enter = false;
-
+		if (
+			input.isKeyPressed(Input.KEYS.ESCAPE) ||
+			input.isKeyPressed(Input.KEYS.ENTER)
+		) {
 			stateStack.pop();
 		}
 	}

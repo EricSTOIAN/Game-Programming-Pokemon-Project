@@ -1,10 +1,11 @@
-import State from "../../../lib/State.js";
-import SoundName from "../../enums/SoundName.js";
-import { keys, sounds, stateStack } from "../../globals.js";
-import Panel from "../../user-interface/elements/Panel.js";
-import Map from "../../services/Map.js";
-import DialogueState from "./DialogueState.js";
-import PokemonStatsState from "./PokemonStatsState.js";
+import State from '../../../lib/State.js';
+import SoundName from '../../enums/SoundName.js';
+import Input from '../../../lib/Input.js';
+import { input, sounds, stateStack } from '../../globals.js';
+import Panel from '../../user-interface/elements/Panel.js';
+import Map from '../../services/Map.js';
+import DialogueState from './DialogueState.js';
+import PokemonStatsState from './PokemonStatsState.js';
 
 export default class PlayState extends State {
 	/**
@@ -25,35 +26,39 @@ export default class PlayState extends State {
 
 	enter() {
 		sounds.play(SoundName.Route);
-		stateStack.push(new DialogueState(
-			`Welcome to the world of Pokémon! \n\n\
+		stateStack.push(
+			new DialogueState(
+				`Welcome to the world of Pokémon! \n\n\
 			Press Enter to advance the text... \n\
 			To start fighting Pokémon with your own \
 			randomly assigned Pokémon, walk in the tall grass. \n\n\
 			If you need to heal, press 'P' in the field! \n\n\
 			Press 'Esc' to view your Pokémon's stats. \n\
 			Good luck!`,
-			Panel.TOP_DIALOGUE
-		));
+				Panel.TOP_DIALOGUE
+			)
+		);
 	}
 
 	update(dt) {
 		this.map.update(dt);
 
-		if (this.map.player.party.every((pokemon) => pokemon.currentHealth === 0)) {
+		if (
+			this.map.player.party.every(
+				(pokemon) => pokemon.currentHealth === 0
+			)
+		) {
 			this.healFaintedPokemon();
 		}
 
-		if (keys.Escape) {
-			keys.Escape = false;
-
+		if (input.isKeyPressed(Input.KEYS.ESCAPE)) {
 			stateStack.push(new PokemonStatsState(this.map.player.party[0]));
 		}
 
-		if (keys.p || keys.P) {
-			keys.p = false;
-			keys.P = false;
-
+		if (
+			input.isKeyPressed(Input.KEYS.p) ||
+			input.isKeyPressed(Input.KEYS.P)
+		) {
 			this.healFaintedPokemon();
 		}
 	}
@@ -77,10 +82,10 @@ export default class PlayState extends State {
 		const message = `Your Pokemon have been healed back to full health...\n \n\
 						Be extra careful next time!`;
 
-		stateStack.push(new DialogueState(
-			message,
-			Panel.BOTTOM_DIALOGUE,
-			() => sounds.play(SoundName.Route)
-		));
+		stateStack.push(
+			new DialogueState(message, Panel.BOTTOM_DIALOGUE, () =>
+				sounds.play(SoundName.Route)
+			)
+		);
 	}
 }

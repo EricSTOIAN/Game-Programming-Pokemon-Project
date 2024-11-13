@@ -11,6 +11,7 @@ import BattleMenuState from "./BattleMenuState.js";
 import BattleMessageState from "./BattleMessageState.js";
 import TransitionState from "./TransitionState.js";
 import Opponent from "../../entities/Opponent.js";
+import Easing from "../../../lib/Easing.js";
 
 export default class BattleState extends State {
 	static PLAYER_PLATFORM = { x: 0, y: 200 };
@@ -95,7 +96,7 @@ export default class BattleState extends State {
 		this.didBattleStart = true;
 
 		sounds.play(SoundName.BattleLoop);
-		timer.tween(this.opponentPokemon.position, ['x'], [Pokemon.FRONT_POSITION.end.x], 0.75, () => this.triggerStartingDialogue());
+		timer.tween(this.opponentPokemon.position, { x: Pokemon.FRONT_POSITION.end.x }, 0.75, Easing.linear, () => this.triggerStartingDialogue());
 	}
 
 	triggerStartingDialogue() {
@@ -106,7 +107,7 @@ export default class BattleState extends State {
 	}
 
 	sendOutPlayerPokemon() {
-		timer.tween(this.playerPokemon.position, ['x'], [Pokemon.BACK_POSITION.end.x], 0.75, () => {
+		timer.tween(this.playerPokemon.position, { x: Pokemon.BACK_POSITION.end.x }, 0.75, Easing.linear, () => {
 			sounds.play(this.playerPokemon.name.toLowerCase());
 			stateStack.push(new BattleMenuState(this))
 		});

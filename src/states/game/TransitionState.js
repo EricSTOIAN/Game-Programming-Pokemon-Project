@@ -1,3 +1,4 @@
+import Easing from "../../../lib/Easing.js";
 import State from "../../../lib/State.js";
 import {
 	CANVAS_HEIGHT,
@@ -24,7 +25,7 @@ export default class TransitionState extends State {
 			this.endAlpha = 1;
 		}
 
-		timer.tween(this, ['alpha'], [this.endAlpha], 1.5, () => {
+		timer.tween(this, { alpha: this.endAlpha }, 1.5, Easing.linear, () => {
 			stateStack.pop();
 			onTransitionComplete();
 		});

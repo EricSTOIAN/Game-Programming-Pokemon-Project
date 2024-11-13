@@ -1,7 +1,8 @@
-import Colour from "../../enums/Colour.js";
-import SoundName from "../../enums/SoundName.js";
-import { context, keys, sounds, timer } from "../../globals.js";
-import Panel from "./Panel.js";
+import Colour from '../../enums/Colour.js';
+import SoundName from '../../enums/SoundName.js';
+import { context, input, sounds, timer } from '../../globals.js';
+import Panel from './Panel.js';
+import Input from '../../../lib/Input.js';
 
 export default class Textbox extends Panel {
 	/**
@@ -28,7 +29,10 @@ export default class Textbox extends Panel {
 		this.nextArrowAlpha = 1;
 		this.endOfText = false;
 		this.isClosed = false;
-		this.pages = this.createPages(text, this.dimensions.x - this.padding * 3);
+		this.pages = this.createPages(
+			text,
+			this.dimensions.x - this.padding * 3
+		);
 
 		if (this.isAdvanceable) {
 			this.arrowTimer = this.flashAdvanceableArrow();
@@ -38,10 +42,10 @@ export default class Textbox extends Panel {
 	}
 
 	update() {
-		if (keys.Enter || keys[' ']) {
-			keys.Enter = false;
-			keys[' '] = false;
-
+		if (
+			input.isKeyPressed(Input.KEYS.ENTER) ||
+			input.isKeyPressed(Input.KEYS.SPACE)
+		) {
 			sounds.play(SoundName.SelectionChoice);
 
 			this.next();
@@ -67,13 +71,20 @@ export default class Textbox extends Panel {
 		context.font = `${this.fontSize}px ${this.fontFamily}`;
 		context.fillStyle = this.fontColour;
 		this.pageToDisplay.forEach((line, index) => {
-			context.fillText(line, this.position.x + this.padding, this.position.y + index * this.fontSize + this.padding);
+			context.fillText(
+				line,
+				this.position.x + this.padding,
+				this.position.y + index * this.fontSize + this.padding
+			);
 		});
 	}
 
 	renderNextArrow() {
 		context.beginPath();
-		context.translate(this.position.x + this.dimensions.x - 20, this.position.y + this.dimensions.y - 15);
+		context.translate(
+			this.position.x + this.dimensions.x - 20,
+			this.position.y + this.dimensions.y - 15
+		);
 		context.moveTo(0, 0);
 		context.lineTo(10, 0);
 		context.lineTo(5, 5);
@@ -90,7 +101,9 @@ export default class Textbox extends Panel {
 	 */
 	createPages(text, width) {
 		const lines = this.getLines(text, width);
-		const linesPerPage = Math.floor((this.dimensions.y - this.padding) / this.fontSize);
+		const linesPerPage = Math.floor(
+			(this.dimensions.y - this.padding) / this.fontSize
+		);
 		const maxPages = Math.ceil(lines.length / linesPerPage);
 		const pages = [];
 
@@ -114,8 +127,7 @@ export default class Textbox extends Panel {
 			this.toggle();
 			this.arrowTimer.clear();
 			this.isClosed = true;
-		}
-		else {
+		} else {
 			this.nextPage();
 		}
 	}
@@ -138,7 +150,7 @@ export default class Textbox extends Panel {
 		const lines = [];
 
 		wordsByLine.forEach((line) => {
-			const words = line.replace(/\t+/g, '').split(" "); // Remove any tab characters.
+			const words = line.replace(/\t+/g, '').split(' '); // Remove any tab characters.
 
 			let currentLine = words[0];
 
@@ -146,12 +158,13 @@ export default class Textbox extends Panel {
 
 			for (let i = 1; i < words.length; i++) {
 				const word = words[i];
-				const width = context.measureText(currentLine + " " + word).width;
+				const width = context.measureText(
+					currentLine + ' ' + word
+				).width;
 
 				if (width < maxWidth) {
-					currentLine += " " + word;
-				}
-				else {
+					currentLine += ' ' + word;
+				} else {
 					lines.push(currentLine);
 					currentLine = word;
 				}

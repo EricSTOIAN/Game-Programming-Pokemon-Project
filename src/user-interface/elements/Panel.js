@@ -1,7 +1,7 @@
-import UserInterfaceElement from "../UserInterfaceElement.js";
-import Colour from "../../enums/Colour.js";
-import { roundedRectangle } from "../../../lib/DrawingHelpers.js";
-import { context } from "../../globals.js";
+import UserInterfaceElement from '../UserInterfaceElement.js';
+import Colour from '../../enums/Colour.js';
+import { roundedRectangle } from '../../../lib/Drawing.js';
+import { context } from '../../globals.js';
 
 export default class Panel extends UserInterfaceElement {
 	static BOTTOM_DIALOGUE = { x: 0, y: 8, width: 15, height: 3 };
