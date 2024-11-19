@@ -1,5 +1,5 @@
 import State from "../../../lib/State.js";
-import { stateStack } from "../../globals.js";
+import { stateStack, timer } from "../../globals.js";
 import Menu from "../../user-interface/elements/Menu.js";
 import BattleMessageState from "./BattleMessageState.js";
 import BattleState from "./BattleState.js";
@@ -8,7 +8,7 @@ import BattleTurnState from "./BattleTurnState.js";
 export default class BattleMenuState extends State {
 	static MENU_OPTIONS = {
 		Fight: "FIGHT",
-		Status: "STATUS",
+		Run: "RUN",
 	}
 
 	/**
@@ -23,7 +23,7 @@ export default class BattleMenuState extends State {
 
 		const items = [
 			{ text: BattleMenuState.MENU_OPTIONS.Fight, onSelect: () => this.fight() },
-			{ text: BattleMenuState.MENU_OPTIONS.Status, onSelect: () => this.status() },
+			{ text: BattleMenuState.MENU_OPTIONS.Run, onSelect: () => this.run() },
 		];
 
 		this.battleMenu = new Menu(
@@ -49,7 +49,8 @@ export default class BattleMenuState extends State {
 		stateStack.push(new BattleTurnState(this.battleState));
 	}
 
-	status() {
-		stateStack.push(new BattleMessageState(`You're doing great!`, 2));
+	run() {
+		stateStack.pop();
+		stateStack.push(new BattleTurnState(this.battleState, true));
 	}
 }

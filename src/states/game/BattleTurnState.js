@@ -18,12 +18,13 @@ export default class BattleTurnState extends State {
 	 *
 	 * @param {BattleState} battleState
 	 */
-	constructor(battleState) {
+	constructor(battleState, run = false) {
 		super();
 
 		this.battleState = battleState;
 		this.playerPokemon = battleState.playerPokemon;
 		this.opponentPokemon = battleState.opponentPokemon;
+		this.run = run;
 
 		// Determine the order of attack based on the Pokemons' speed.
 		if (this.playerPokemon.speed > this.opponentPokemon.speed) {
@@ -42,6 +43,11 @@ export default class BattleTurnState extends State {
 	}
 
 	enter() {
+		if (this.checkBattleEnded()) {
+			stateStack.pop();
+			return;
+		}
+
 		this.attack(this.firstPokemon, this.secondPokemon, () => {
 			if (this.checkBattleEnded()) {
 				stateStack.pop();
@@ -126,6 +132,10 @@ export default class BattleTurnState extends State {
 	}
 
 	checkBattleEnded() {
+		if(this.run){
+			this.processRunning();
+			return true;
+		}
 		if (this.playerPokemon.currentHealth <= 0) {
 			this.processDefeat();
 			return true;
@@ -152,6 +162,24 @@ export default class BattleTurnState extends State {
 				stateStack.push(
 					new BattleMessageState(
 						`${this.playerPokemon.name} fainted!`,
+						0,
+						() => this.battleState.exitBattle()
+					)
+				);
+			}
+		);
+	}
+
+	processRunning() {
+		timer.tween(
+			this.playerPokemon.position,
+			{ y: CANVAS_HEIGHT },
+			0.2,
+			Easing.linear,
+			() => {
+				stateStack.push(
+					new BattleMessageState(
+						`${this.playerPokemon.name} has gotten away safely!`,
 						0,
 						() => this.battleState.exitBattle()
 					)
