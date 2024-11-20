@@ -20,6 +20,9 @@ export default class ProgressBar extends UserInterfaceElement {
 	 */
 	constructor(x, y, width, height) {
 		super(x, y, width, height);
+
+		this.x = x;
+		this.y = y;
 	}
 
 	update() {
@@ -29,11 +32,7 @@ export default class ProgressBar extends UserInterfaceElement {
 	render() {
 		super.render();
 
-        context.save();
-		context.textBaseline = 'top';
-		context.fillStyle = Colour.Black;
-        context.fillRect(this.position.x + this.dimensions.x - 70,
-			this.position.y + this.dimensions.y - 50, 100, 10);
-        context.restore();
+        roundedRectangle(context, this.x + 15,
+			this.y - 15, 150, 10)
 	}
 }

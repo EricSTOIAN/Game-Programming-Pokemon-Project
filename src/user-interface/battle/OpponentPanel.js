@@ -21,6 +21,8 @@ export default class BattleOpponentPanel extends Panel {
 		super(x, y, width, height, options);
 
 		this.pokemon = pokemon;
+
+		//this.healthBar = new ProgressBar()
 	}
 
 	render() {
@@ -38,20 +40,31 @@ export default class BattleOpponentPanel extends Panel {
 	renderStatistics() {
 		context.save();
 		context.textBaseline = 'top';
-		context.fillStyle = Colour.Black;
+		context.fillStyle = Colour.Green;
 		context.font = `${UserInterfaceElement.FONT_SIZE}px ${UserInterfaceElement.FONT_FAMILY}`;
 		context.fillText(this.pokemon.name.toUpperCase(), this.position.x + 15, this.position.y + 12);
 		context.textAlign = 'right';
-		context.fillText(
-			`HP: ${this.pokemon.getHealthMeter()}`,
-			this.position.x + this.dimensions.x - 30,
-			this.position.y + this.dimensions.y - 25
-		);
 		context.fillText(`Lv${this.pokemon.level}`, this.position.x + this.dimensions.x - 10, this.position.y + 12);
 		context.restore();
 	}
 
 	renderBar(){
-		roundedRectangle(context, 100, 100, 100, 10)
+		context.save();
+		context.rect(this.position.x + 15,
+			this.position.y + this.dimensions.y - 25, 150, 10);
+		const healthBar = this.pokemon.currentHealth / this.pokemon.health * 100;
+
+		if(healthBar <= 25){
+			context.fillStyle = "red";
+		}
+		else if(healthBar <= 50){
+			context.fillStyle = "yellow";
+		}
+		else{
+			context.fillStyle = "green";
+		}
+		context.fillRect(this.position.x + 15,
+			this.position.y + this.dimensions.y - 25, healthBar * 1.5, 10);
+		context.restore();
 	}
 }
