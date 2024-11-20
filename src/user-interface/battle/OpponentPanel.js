@@ -3,6 +3,7 @@ import Colour from "../../enums/Colour.js";
 import { context } from "../../globals.js";
 import Pokemon from "../../entities/Pokemon.js";
 import UserInterfaceElement from "../UserInterfaceElement.js";
+import { roundedRectangle } from "../../../lib/Drawing.js";
 
 export default class BattleOpponentPanel extends Panel {
 	/**
@@ -26,6 +27,8 @@ export default class BattleOpponentPanel extends Panel {
 		super.render();
 
 		this.renderStatistics();
+
+		this.renderBar()
 	}
 
 	/**
@@ -46,5 +49,9 @@ export default class BattleOpponentPanel extends Panel {
 		);
 		context.fillText(`Lv${this.pokemon.level}`, this.position.x + this.dimensions.x - 10, this.position.y + 12);
 		context.restore();
+	}
+
+	renderBar(){
+		roundedRectangle(context, 100, 100, 100, 10)
 	}
 }

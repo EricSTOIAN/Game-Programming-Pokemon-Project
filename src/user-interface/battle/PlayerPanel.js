@@ -54,6 +54,7 @@ export default class BattlePlayerPanel extends Panel {
 			this.position.x + this.dimensions.x - 30,
 			this.position.y + this.dimensions.y - 50
 		);
+		
 		context.fillText(
 			`EXP: ${this.pokemon.getExperienceMeter()}`,
 			this.position.x + this.dimensions.x - 30,
