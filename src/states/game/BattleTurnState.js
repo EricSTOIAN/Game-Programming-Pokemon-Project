@@ -3,10 +3,14 @@ import SoundName from '../../enums/SoundName.js';
 import { CANVAS_HEIGHT, sounds, stateStack, timer } from '../../globals.js';
 import Pokemon from '../../entities/Pokemon.js';
 import BattleMenuState from './BattleMenuState.js';
+import Menu from "../../user-interface/elements/Menu.js";
 import BattleMessageState from './BattleMessageState.js';
 import BattleState from './BattleState.js';
 import { oneInXChance } from '../../../lib/Random.js';
 import Easing from '../../../lib/Easing.js';
+import LevelUpMenuState from './LevelUpMenuState.js';
+import DialogueState from './DialogueState.js';
+import Panel from '../../user-interface/elements/Panel.js';
 
 export default class BattleTurnState extends State {
 	/**
@@ -238,14 +242,38 @@ export default class BattleTurnState extends State {
 
 		sounds.play(SoundName.ExperienceFull);
 
+		this.pokemonBeforeLevelUpHealth = this.playerPokemon.health;
+		this.pokemonBeforeLevelUpAttack = this.playerPokemon.attack;
+		this.pokemonBeforeLevelUpDefense = this.playerPokemon.defense;
+		this.pokemonBeforeLevelUpSpeed = this.playerPokemon.speed;
+
 		this.playerPokemon.levelUp();
+
+		//stateStack.push(new LevelUpMenuState(this.battleState)); //chnage this state to a new one you create to show the new level of the pokemon
 
 		stateStack.push(
 			new BattleMessageState(
 				`${this.playerPokemon.name} grew to LV. ${this.playerPokemon.level}!`,
 				0,
-				() => this.battleState.exitBattle()
+				() => this.showLevelStats(this.pokemonBeforeLevelUpHealth,
+					this.pokemonBeforeLevelUpAttack,
+					this.pokemonBeforeLevelUpDefense,
+					this.pokemonBeforeLevelUpSpeed)
 			)
 		);
 	}
+
+	showLevelStats(health, attack, defense, speed) {
+		const message = `Health: ${health} > ${this.playerPokemon.health}	
+		Attack: ${attack} > ${this.playerPokemon.attack}
+			Defense: ${defense} > ${this.playerPokemon.defense}	
+			Speed: ${speed} > ${this.playerPokemon.speed}`;
+	
+		stateStack.push(
+			new DialogueState(message, Panel.POKEMON_STATS, () =>
+				this.battleState.exitBattle()
+			)
+		);
+	}
+	
 }
