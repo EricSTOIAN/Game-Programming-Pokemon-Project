@@ -29,6 +29,8 @@ export default class BattlePlayerPanel extends Panel {
 		this.renderStatistics();
 
 		this.renderBar();
+
+		this.renderExperienceBar();
 	}
 
 	/**
@@ -82,6 +84,18 @@ export default class BattlePlayerPanel extends Panel {
 		}
 		context.fillRect(this.position.x + 15,
 			this.position.y + this.dimensions.y - 25, healthBar * 1.5, 10);
+		context.restore();
+	}
+
+	renderExperienceBar(){
+		context.save();
+		context.rect(this.position.x + 15,
+			this.position.y + this.dimensions.y - 35, 150, 4);
+		const healthBar = this.pokemon.currentExperience - this.pokemon.levelExperience / this.pokemon.targetExperience - this.pokemon.levelExperience;
+
+		context.fillStyle = "blue";
+		context.fillRect(this.position.x,
+			this.position.y + this.dimensions.y + 5, healthBar * 2, 4);
 		context.restore();
 	}
 }
